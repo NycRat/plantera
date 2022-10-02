@@ -1,3 +1,9 @@
+# General
+
+.DS_Store
+.env
+
+
 # Backend Rust
 
 /backend/target
