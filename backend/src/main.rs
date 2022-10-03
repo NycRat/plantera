@@ -5,9 +5,8 @@ use mysql::*;
 use rocket::futures::lock::Mutex;
 
 pub mod models;
-pub mod utils;
 pub mod routes;
-
+pub mod utils;
 
 #[launch]
 async fn rocket() -> _ {
@@ -33,10 +32,14 @@ async fn rocket() -> _ {
     rocket::build()
         .attach(cors.to_cors().unwrap())
         .manage(Mutex::new(conn))
-        .mount("/api", routes![
-               routes::user_routes::get_users_list,
-               routes::user_routes::post_user_new
-               // index, 
-               // post_user_new
-        ])
+        .mount(
+            "/api",
+            routes![
+                routes::user_routes::get_users_list,
+                routes::user_routes::get_user_plants,
+                routes::user_routes::post_user_new,
+                routes::plant_routes::get_plant_list,
+                routes::plant_routes::post_plant_new,
+            ],
+        )
 }

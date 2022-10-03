@@ -4,27 +4,46 @@ use rocket::data::ToByteUnit;
 use rocket::futures::lock::Mutex;
 use rocket::{Data, State};
 
-use crate::models::user::{User, LoginInfo};
+use crate::models::user::{LoginInfo, User};
 use crate::utils::string_to_array;
 
 #[get("/users/list")]
 pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> String {
     let mut conn = conn_mutex.lock().await;
-    let res = conn.query_map("SELECT username, plants from users", |(username, plants)| {
-        let plants = match string_to_array::<i32>(plants) {
-            Ok(arr) => arr,
-            Err(_) => vec![],
-        };
-        let password = "".to_owned();
+    let res = conn.query_map(
+        "SELECT username, plants from users",
+        |(username, plants)| {
+            let plants = match string_to_array::<i32>(plants) {
+                Ok(arr) => arr,
+                Err(_) => vec![],
+            };
+            let password = "".to_owned();
 
-        User {
-            username,
-            password,
-            plants,
-        }
-    });
+            User {
+                username,
+                password,
+                plants,
+            }
+        },
+    );
 
     return format!("{:?}", res);
+}
+
+#[get("/user/plants?<username>")]
+pub async fn get_user_plants(username: &str, conn_mutex: &State<Mutex<PooledConn>>) -> String {
+    let mut conn = conn_mutex.lock().await;
+    let query_string = format!("SELECT plants from users where username = {}", username);
+    // let test: vec<string> = conn.query(&query_string).unwrap();
+    return match conn.query_first::<String, &String>(&query_string) {
+        Ok(a) => {
+            if let Some(x) = a {
+                return x;
+            }
+            "[]".into()
+        }
+        Err(_err) => "[]".into(),
+    };
 }
 
 #[post("/user/new", data = "<data>")]
@@ -40,7 +59,7 @@ pub async fn post_user_new(data: Data<'_>, conn_mutex: &State<Mutex<PooledConn>>
                 &login_info.username,
                 format!("{}{}", &login_info.username, &login_info.password)
             );
-            println!("{}", query_string);
+            // println!("{}", query_string);
             match conn.query_drop(query_string) {
                 Ok(_) => {}
                 Err(err) => {
@@ -59,5 +78,5 @@ pub async fn post_user_new(data: Data<'_>, conn_mutex: &State<Mutex<PooledConn>>
         }
     }
 
-    return "Some Error";
+    return "Error creating User";
 }
