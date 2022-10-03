@@ -2,36 +2,49 @@ use mysql::prelude::*;
 use mysql::*;
 use rocket::data::ToByteUnit;
 use rocket::futures::lock::Mutex;
+use rocket::http::Status;
 use rocket::{Data, State};
 
 use crate::models::user::{LoginInfo, User};
-use crate::utils::string_to_array;
 
 #[get("/users/list")]
-pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> String {
+pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> (Status, String) {
     let mut conn = conn_mutex.lock().await;
+    let mut is_err = false;
     let res = conn.query_map(
         "SELECT username, plants from users",
-        |(username, plants)| {
-            let plants = match string_to_array::<i32>(plants) {
+        |(username, plants): (String, String)| {
+            let plants = match rocket::serde::json::from_str(&plants) {
                 Ok(arr) => arr,
-                Err(_) => vec![],
+                Err(err) => {
+                    is_err = true;
+                    println!("{:?}", err);
+                    vec![]
+                }
             };
-            let password = "".to_owned();
 
-            User {
-                username,
-                password,
-                plants,
-            }
+            User { username, plants }
         },
     );
 
-    return format!("{:?}", res.ok().unwrap());
+    if is_err {
+        return (Status::InternalServerError, "".into());
+    }
+
+    match res {
+        Ok(res) => match rocket::serde::json::to_string(&res) {
+            Ok(serialized_res) => {
+                return (Status::Ok, serialized_res);
+            }
+            Err(err) => println!("{:?}", err),
+        },
+        Err(err) => println!("{:?}", err),
+    }
+    return (Status::InternalServerError, "".into());
 }
 
 #[post("/user/new", data = "<data>")]
-pub async fn post_user_new(data: Data<'_>, conn_mutex: &State<Mutex<PooledConn>>) -> &'static str {
+pub async fn post_user_new(data: Data<'_>, conn_mutex: &State<Mutex<PooledConn>>) -> Status {
     let mut conn = conn_mutex.lock().await;
 
     match data.open(1.kilobytes()).into_string().await {
@@ -47,20 +60,24 @@ pub async fn post_user_new(data: Data<'_>, conn_mutex: &State<Mutex<PooledConn>>
             match conn.query_drop(query_string) {
                 Ok(_) => {}
                 Err(err) => {
-                    println!("{:?}", err);
-                    // if err ==  {
-                    // }
-                    // TODO - actually confirm not other error
-                    return "User already exists";
+                    match err {
+                        mysql::Error::MySqlError(err) => {
+                            // DUPLICATE ENTRY ERROR CODE = 1062
+                            if err.code == 1062 {
+                                return Status::Conflict;
+                            }
+                        }
+                        _ => {
+                            println!("{:?}", err)
+                        }
+                    }
                 }
             }
             println!("{:?}", login_info);
-            return "User created successfully";
+            return Status::Created;
         }
-        Err(err) => {
-            println!("{:?}", err);
-        }
+        Err(err) => println!("{:?}", err),
     }
 
-    return "Error creating User";
+    return Status::InternalServerError;
 }

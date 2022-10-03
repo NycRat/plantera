@@ -1,26 +1,31 @@
 use mysql::prelude::*;
 use mysql::*;
 use rocket::futures::lock::Mutex;
+use rocket::http::Status;
 use rocket::State;
 
 #[get("/plant/list?<username>")]
-pub async fn get_plant_list(username: &str, conn_mutex: &State<Mutex<PooledConn>>) -> String {
+pub async fn get_plant_list(
+    username: &str,
+    conn_mutex: &State<Mutex<PooledConn>>,
+) -> (Status, String) {
     let mut conn = conn_mutex.lock().await;
     let query_string = format!("SELECT plants from users where username = {}", username);
     // let test: vec<string> = conn.query(&query_string).unwrap();
-    return match conn.query_first::<String, &String>(&query_string) {
-        Ok(a) => {
-            if let Some(x) = a {
-                return x;
+    match conn.query_first::<String, &String>(&query_string) {
+        Ok(res) => {
+            if let Some(some_res) = res {
+                return (Status::Ok, some_res);
             }
-            "[]".into()
+            return (Status::NotFound, "".into());
         }
-        Err(_err) => "[]".into(),
+        Err(err) => println!("{:?}", err),
     };
+    return (Status::InternalServerError, "".into());
 }
 
 #[post("/plant/new?<username>")]
-pub async fn post_plant_new(username: &str, conn_mutex: &State<Mutex<PooledConn>>) -> &'static str {
+pub async fn post_plant_new(username: &str, conn_mutex: &State<Mutex<PooledConn>>) -> Status {
     let plant_id = 5;
 
     let mut conn = conn_mutex.lock().await;
@@ -30,11 +35,10 @@ pub async fn post_plant_new(username: &str, conn_mutex: &State<Mutex<PooledConn>
     );
     match conn.query_drop(query_string) {
         Ok(_) => {
-            return "Successfully created plant";
+            return Status::Created;
         }
-        Err(err) => {
-            println!("{:?}", err);
-        }
+        Err(err) => println!("{:?}", err),
     }
-    return "Error creating new plant";
+
+    return Status::InternalServerError;
 }
