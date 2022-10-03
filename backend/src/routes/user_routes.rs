@@ -27,23 +27,7 @@ pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> String {
         },
     );
 
-    return format!("{:?}", res);
-}
-
-#[get("/user/plants?<username>")]
-pub async fn get_user_plants(username: &str, conn_mutex: &State<Mutex<PooledConn>>) -> String {
-    let mut conn = conn_mutex.lock().await;
-    let query_string = format!("SELECT plants from users where username = {}", username);
-    // let test: vec<string> = conn.query(&query_string).unwrap();
-    return match conn.query_first::<String, &String>(&query_string) {
-        Ok(a) => {
-            if let Some(x) = a {
-                return x;
-            }
-            "[]".into()
-        }
-        Err(_err) => "[]".into(),
-    };
+    return format!("{:?}", res.ok().unwrap());
 }
 
 #[post("/user/new", data = "<data>")]

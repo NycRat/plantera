@@ -36,7 +36,6 @@ async fn rocket() -> _ {
             "/api",
             routes![
                 routes::user_routes::get_users_list,
-                routes::user_routes::get_user_plants,
                 routes::user_routes::post_user_new,
                 routes::plant_routes::get_plant_list,
                 routes::plant_routes::post_plant_new,
