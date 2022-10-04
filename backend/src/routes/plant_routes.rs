@@ -1,4 +1,4 @@
-use crate::models::plant::NewPlantRequest;
+use crate::models::plant::Plant;
 use crate::utils::is_authorized;
 use mysql::prelude::*;
 use mysql::*;
@@ -33,13 +33,24 @@ pub async fn get_plant_list(
 
         let where_str = &where_str[0..where_str.len() - 4];
 
-        let plant_name_arr = conn
-            .query::<String, String>(format!("SELECT name FROM plants WHERE {}", where_str))
+        let plant_str_arr: Vec<(String, u64)> = conn
+            .query(format!("SELECT name, watering_interval FROM plants WHERE {}", where_str))
             .unwrap();
+
+        for plant in &plant_str_arr {
+            println!("PLANT: {:?}", plant);
+        }
+
+        let plant_arr: Vec<Plant> = plant_str_arr.iter().map(|(name, watering_interval)| {
+            Plant {
+                name: name.to_string(),
+                watering_interval: *watering_interval
+            }
+        }).collect();
 
         return (
             Status::Ok,
-            rocket::serde::json::to_string(&plant_name_arr).unwrap(),
+            rocket::serde::json::to_string(&plant_arr).unwrap(),
         );
     } else {
         return (Status::NotFound, "".into());
@@ -53,8 +64,8 @@ pub async fn post_plant_new(
     auth: Authentication,
 ) -> Status {
     let req = data.open(1.kilobytes()).into_string().await.unwrap();
-    let plant_info: NewPlantRequest;
-    match rocket::serde::json::from_str::<NewPlantRequest>(&req) {
+    let plant_info: Plant;
+    match rocket::serde::json::from_str::<Plant>(&req) {
         Ok(req) => {
             plant_info = req;
             if plant_info.name.len() == 0 {

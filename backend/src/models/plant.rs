@@ -1,17 +1,9 @@
-use rocket::serde::Deserialize;
+use rocket::serde::{Serialize, Deserialize};
 
 // idk why this is here im not even using
-#[derive(Debug, PartialEq, Eq)]
-pub struct Plant {
-    pub id: String,
-    pub user: String,
-    pub name: String,
-    pub watering_interval: u64,
-}
-
-#[derive(Debug, PartialEq, Eq, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
-pub struct NewPlantRequest {
+pub struct Plant {
     pub name: String,
     pub watering_interval: u64,
 }
