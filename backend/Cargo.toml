@@ -13,3 +13,11 @@ tokio = { version = "1", features = ["full"] }
 
 mysql = "22.2.0"
 dotenv = "0.15.0"
+
+[dependencies.uuid]
+version = "1.1.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
