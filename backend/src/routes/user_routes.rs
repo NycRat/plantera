@@ -5,31 +5,11 @@ use rocket::http::Status;
 use rocket::State;
 
 use crate::authentication::{Authentication, AuthenticationStatus};
-use crate::models::user::User;
 
 #[get("/users/list")]
 pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> (Status, String) {
     let mut conn = conn_mutex.lock().await;
-    let mut is_err = false;
-    let res = conn.query_map(
-        "SELECT username, plants from users",
-        |(username, plants): (String, String)| {
-            let plants = match rocket::serde::json::from_str(&plants) {
-                Ok(arr) => arr,
-                Err(err) => {
-                    is_err = true;
-                    println!("{:?}", err);
-                    vec![]
-                }
-            };
-
-            User { username, plants }
-        },
-    );
-
-    if is_err {
-        return (Status::InternalServerError, "".into());
-    }
+    let res = conn.query_map("SELECT username from users", |username: String| username);
 
     match res {
         Ok(res) => match rocket::serde::json::to_string(&res) {
