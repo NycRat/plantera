@@ -141,6 +141,7 @@ name = "backend"
 version = "0.1.0"
 dependencies = [
  "dotenv",
+ "http-auth-basic",
  "mysql",
  "rocket",
  "rocket_cors",
@@ -813,6 +814,15 @@ dependencies = [
  "bytes",
  "fnv",
  "itoa",
+]
+
+[[package]]
+name = "http-auth-basic"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd2e17aacf7f4a2428def798e2ff4f4f883c0987bdaf47dd5c8bc027bc9f1ebc"
+dependencies = [
+ "base64",
 ]
 
 [[package]]

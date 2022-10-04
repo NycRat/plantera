@@ -1,11 +1,4 @@
-use rocket::serde::{Deserialize, Serialize};
-
-#[derive(Debug, PartialEq, Deserialize)]
-#[serde(crate = "rocket::serde")]
-pub struct LoginInfo {
-    pub username: String,
-    pub password: String,
-}
+use rocket::serde::Serialize;
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
 #[serde(crate = "rocket::serde")]

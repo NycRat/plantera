@@ -1,11 +1,11 @@
 use mysql::prelude::*;
 use mysql::*;
-use rocket::data::ToByteUnit;
 use rocket::futures::lock::Mutex;
 use rocket::http::Status;
-use rocket::{Data, State};
+use rocket::State;
 
-use crate::models::user::{LoginInfo, User};
+use crate::authentication::{Authentication, AuthenticationStatus};
+use crate::models::user::User;
 
 #[get("/users/list")]
 pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> (Status, String) {
@@ -43,41 +43,47 @@ pub async fn get_users_list(conn_mutex: &State<Mutex<PooledConn>>) -> (Status, S
     return (Status::InternalServerError, "".into());
 }
 
-#[post("/user/new", data = "<data>")]
-pub async fn post_user_new(data: Data<'_>, conn_mutex: &State<Mutex<PooledConn>>) -> Status {
+#[post("/user/new")]
+pub async fn post_user_new(
+    auth: Authentication,
+    conn_mutex: &State<Mutex<PooledConn>>,
+) -> (Status, String) {
     let mut conn = conn_mutex.lock().await;
 
-    match data.open(1.kilobytes()).into_string().await {
-        Ok(data_str) => {
-            let login_info: LoginInfo = rocket::serde::json::from_str(&data_str.value).unwrap();
-            let query_string = format!(
-                "INSERT INTO users (username, password, plants) 
+    match auth.0 {
+        AuthenticationStatus::Valid => {
+            if let Some(login_info) = auth.1 {
+                let query_string = format!(
+                    "INSERT INTO users (username, password, plants) 
                     VALUES (\"{}\", MD5(\"{}\"), JSON_ARRAY())",
-                &login_info.username,
-                format!("{}{}", &login_info.username, &login_info.password)
-            );
-            // println!("{}", query_string);
-            match conn.query_drop(query_string) {
-                Ok(_) => {}
-                Err(err) => {
-                    match err {
-                        mysql::Error::MySqlError(err) => {
-                            // DUPLICATE ENTRY ERROR CODE = 1062
-                            if err.code == 1062 {
-                                return Status::Conflict;
+                    &login_info.user_id,
+                    format!("{}{}", &login_info.user_id, &login_info.password)
+                );
+                // println!("{}", query_string);
+                match conn.query_drop(query_string) {
+                    Ok(_) => {}
+                    Err(err) => {
+                        match err {
+                            mysql::Error::MySqlError(err) => {
+                                // DUPLICATE ENTRY ERROR CODE = 1062
+                                if err.code == 1062 {
+                                    return (Status::Conflict, "".into());
+                                }
                             }
-                        }
-                        _ => {
-                            println!("{:?}", err)
+                            _ => {
+                                println!("{:?}", err)
+                            }
                         }
                     }
                 }
+                println!("{:?}", login_info);
+                return (Status::Created, "".into());
             }
-            println!("{:?}", login_info);
-            return Status::Created;
         }
-        Err(err) => println!("{:?}", err),
+        _ => {
+            return (Status::BadRequest, format!("{:?}", auth.0));
+        }
     }
 
-    return Status::InternalServerError;
+    return (Status::InternalServerError, "".into());
 }

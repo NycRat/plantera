@@ -4,6 +4,7 @@ extern crate rocket;
 use mysql::*;
 use rocket::futures::lock::Mutex;
 
+pub mod authentication;
 pub mod models;
 pub mod routes;
 pub mod utils;

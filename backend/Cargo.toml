@@ -8,7 +8,8 @@ edition = "2021"
 [dependencies]
 rocket = { version = "0.5.0-rc.2", features = ["json"] }
 rocket_cors = { git = "https://github.com/lawliet89/rocket_cors", branch = "master" }
-mysql = "22.2.0"
-
+http-auth-basic = "0.3.3"
 tokio = { version = "1", features = ["full"] }
+
+mysql = "22.2.0"
 dotenv = "0.15.0"
