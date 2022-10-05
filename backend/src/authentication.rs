@@ -63,3 +63,18 @@ impl<'r> FromRequest<'r> for Authentication {
         return Outcome::Failure((Status::InternalServerError, ()));
     }
 }
+
+pub struct TokenAuthentication(pub Option<String>);
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for TokenAuthentication {
+    type Error = ();
+
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        let token_cookie = request.cookies().get("token");
+        if let Some(token_cookie) = token_cookie {
+            return Outcome::Success(TokenAuthentication(Some(token_cookie.value().into())));
+        }
+        return Outcome::Success(TokenAuthentication(None));
+    }
+}

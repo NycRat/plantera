@@ -1,5 +1,5 @@
 import { createRef, useState } from "react";
-import { apiSignUp } from "./loginPageApi";
+import { apiLogin, apiSignUp } from "./loginPageApi";
 import styles from "./loginPage.module.scss";
 
 const LoginPage = (): JSX.Element => {
@@ -14,7 +14,12 @@ const LoginPage = (): JSX.Element => {
       return;
     }
 
-    apiSignUp(usernameRef.current.value, passwordRef.current.value);
+    if (isNewAccount) {
+      apiSignUp(usernameRef.current.value, passwordRef.current.value);
+    } else {
+      apiLogin(usernameRef.current.value, passwordRef.current.value);
+    }
+
   };
 
   return (

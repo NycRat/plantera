@@ -3,7 +3,7 @@ import { apiGetPlantList } from "./plantsApi";
 
 interface Plant {
   name: string;
-  wateringInterval: number;
+  watering_interval: number;
 }
 
 const PlantsPage = (): JSX.Element => {
@@ -21,7 +21,7 @@ const PlantsPage = (): JSX.Element => {
     <div>
       {plantList.map((plant, i) => (
         <div key={i}>
-          {plant.name}: {plant.wateringInterval}
+          {plant.name}: {plant.watering_interval}
         </div>
       ))}
     </div>

@@ -38,6 +38,7 @@ async fn rocket() -> _ {
             routes![
                 routes::user_routes::get_user_list,
                 routes::user_routes::post_user_new,
+                routes::user_routes::get_user_login,
                 routes::plant_routes::get_plant_list,
                 routes::plant_routes::post_plant_new,
             ],
