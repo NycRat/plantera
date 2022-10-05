@@ -1,0 +1,32 @@
+@import "./base.scss";
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+
+  font-family: $default-font;
+  background-color: $color-light-1;
+  color: #ffffff;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+}
+
+.navbar {
+  background-color: $color-dark-1;
+  padding: 5px;
+  a {
+    font-size: 2em;
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+  }
+}

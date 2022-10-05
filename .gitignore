@@ -7,3 +7,8 @@
 # Backend Rust
 
 /backend/target
+
+# Frontend React
+
+frontend/web/node_modules
+frontend/web/build
