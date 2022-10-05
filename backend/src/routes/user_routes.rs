@@ -4,10 +4,7 @@ use rocket::futures::lock::Mutex;
 use rocket::http::Status;
 use rocket::State;
 
-use crate::{
-    authentication::{Authentication, AuthenticationStatus},
-    utils::is_authorized,
-};
+use crate::authentication::{Authentication, AuthenticationStatus};
 
 #[get("/user/list")]
 pub async fn get_user_list(conn_mutex: &State<Mutex<PooledConn>>) -> (Status, String) {
@@ -25,6 +22,7 @@ pub async fn post_user_new(
     auth: Authentication,
     conn_mutex: &State<Mutex<PooledConn>>,
 ) -> (Status, String) {
+    // TODO - Add email
     let mut conn = conn_mutex.lock().await;
 
     match auth.0 {

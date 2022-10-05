@@ -11,13 +11,10 @@ body,
   background-color: $color-light-1;
   color: #ffffff;
 
+  overflow: hidden;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-.app {
-  width: 100%;
-  height: 100%;
 }
 
 .navbar {
@@ -29,4 +26,9 @@ body,
     text-decoration: none;
     margin-left: 20px;
   }
+}
+
+.page {
+  width: 100%;
+  height: 100%;
 }
