@@ -10,23 +10,15 @@ const SettingsPage = (): JSX.Element => {
   const handleLogout = () => {
     removeCookie("token");
     removeCookie("username");
-    navigate("/");
+    navigate("/login");
   };
 
   return (
     <div className="page">
       <h1 className={styles.userTitle}>{cookies.username}</h1>
       <button onClick={handleLogout}>Logout</button>
-      {/* {cookies.username === query.get("user") && <button>Logout</button>} */}
     </div>
   );
 };
 
-// AVERY: 98.25 * 3
-// 10.05 * 30
-
-// D
-// A
-//
-//
 export default SettingsPage;
