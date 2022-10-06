@@ -1,12 +1,17 @@
 import { createRef, useState } from "react";
-import { apiLogin, apiSignUp } from "./loginPageApi";
+import { apiGetLoginToken, apiGetSignupToken } from "./loginPageApi";
 import styles from "./loginPage.module.scss";
+import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const LoginPage = (): JSX.Element => {
   const usernameRef = createRef<HTMLInputElement>();
   const passwordRef = createRef<HTMLInputElement>();
 
   const [isNewAccount, setIsNewAccount] = useState<boolean>(false);
+  const [cookies, setCookies] = useCookies(["token", "username"]);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -14,12 +19,24 @@ const LoginPage = (): JSX.Element => {
       return;
     }
 
+    let token;
     if (isNewAccount) {
-      apiSignUp(usernameRef.current.value, passwordRef.current.value);
+      token = await apiGetSignupToken(
+        usernameRef.current.value,
+        passwordRef.current.value
+      );
     } else {
-      apiLogin(usernameRef.current.value, passwordRef.current.value);
+      token = await apiGetLoginToken(
+        usernameRef.current.value,
+        passwordRef.current.value
+      );
     }
 
+    if (token) {
+      setCookies("token", token);
+      setCookies("username", usernameRef.current.value);
+      navigate("/");
+    }
   };
 
   return (
