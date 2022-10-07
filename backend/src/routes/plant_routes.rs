@@ -1,8 +1,7 @@
 use crate::models::plant::Plant;
-use crate::utils::get_authorized_username;
+use crate::utils::{get_authorized_username, get_plant_from_request_data, get_plant_id};
 use mysql::prelude::*;
 use mysql::*;
-use rocket::data::ToByteUnit;
 use rocket::futures::lock::Mutex;
 use rocket::http::Status;
 use rocket::{Data, State};
@@ -26,9 +25,9 @@ pub async fn get_plant_list(
 
         let mut where_str = "".to_owned();
         for plant in plant_id_arr {
-            where_str += "id = \"";
+            where_str += "id = '";
             where_str += &plant.to_string();
-            where_str += "\" OR ";
+            where_str += "' OR ";
         }
 
         let where_str = &where_str[0..where_str.len() - 4];
@@ -64,47 +63,98 @@ pub async fn post_plant_new(
     conn_mutex: &State<Mutex<PooledConn>>,
     token_auth: TokenAuthentication,
 ) -> Status {
-    let req = data.open(1.kilobytes()).into_string().await.unwrap();
-    let plant_info: Plant;
-    match rocket::serde::json::from_str::<Plant>(&req) {
-        Ok(req) => {
-            plant_info = req;
-            if plant_info.name.len() == 0 {
-                return Status::BadRequest;
-            }
-        }
-        Err(err) => {
-            println!("{:?}", err);
-            return Status::BadRequest;
-        }
+    let plant = get_plant_from_request_data(data).await;
+    if plant.is_none() {
+        return Status::BadRequest;
     }
+    let plant = plant.unwrap();
 
     let mut conn = conn_mutex.lock().await;
 
     let username = get_authorized_username(&mut conn, token_auth.0);
     if let Some(username) = username {
         let get_user_id = format!(
-            "(SELECT username from users WHERE username = \"{}\")",
+            "(SELECT username from users WHERE username = '{}')",
             username
         );
 
         let plant_id = uuid::Uuid::new_v4().to_string();
-        let insert_plant_table_str = format!("INSERT INTO plants (id, name, user, watering_interval) VALUES (\"{}\", \"{}\", {}, {})", 
-                                         &plant_id,
-                                         &plant_info.name,
-                                         &get_user_id,
-                                         &plant_info.watering_interval
-                                         );
+        let insert_plant_table_str = format!(
+            "INSERT INTO plants (id, name, user, watering_interval) VALUES ('{}', '{}', {}, {})",
+            &plant_id, &plant.name, &get_user_id, &plant.watering_interval
+        );
         conn.query_drop(insert_plant_table_str).unwrap();
 
         let insert_user_plants_str = format!(
-        "UPDATE users SET plants = JSON_ARRAY_APPEND(plants, \"$\", \"{}\") WHERE username = \"{}\"",
-        plant_id,
-        username
-    );
+            "UPDATE users SET plants = JSON_ARRAY_APPEND(plants, '$', '{}') WHERE username = '{}'",
+            plant_id, username
+        );
         conn.query_drop(insert_user_plants_str).unwrap();
         return Status::Created;
     } else {
         return Status::Unauthorized;
     }
+}
+
+#[post("/plant/update?<index>", data = "<data>")]
+pub async fn post_plant_update(
+    index: usize,
+    data: Data<'_>,
+    conn_mutex: &State<Mutex<PooledConn>>,
+    token_auth: TokenAuthentication,
+) -> Status {
+    let plant = get_plant_from_request_data(data).await;
+    if plant.is_none() {
+        return Status::BadRequest;
+    }
+    let plant = plant.unwrap();
+
+    let mut conn = conn_mutex.lock().await;
+
+    let username = get_authorized_username(&mut conn, token_auth.0);
+    if let Some(username) = username {
+        let plant_id = get_plant_id(&mut conn, &username, index);
+        if let Some(plant_id) = plant_id {
+            let query_string = format!("UPDATE plants SET name = '{}', last_watered = {}, watering_interval = {} WHERE id = '{}' AND user = '{}'",
+                                       plant.name,
+                                       plant.last_watered,
+                                       plant.watering_interval,
+                                       plant_id,
+                                       username
+                                       );
+
+            println!("{}", query_string);
+            conn.query_drop(query_string).unwrap();
+            return Status::Ok;
+        }
+        return Status::NotFound;
+    }
+
+    return Status::Unauthorized;
+}
+
+#[delete("/plant?<index>")]
+pub async fn delete_plant(
+    index: usize,
+    conn_mutex: &State<Mutex<PooledConn>>,
+    token_auth: TokenAuthentication,
+) -> Status {
+    let mut conn = conn_mutex.lock().await;
+
+    let username = get_authorized_username(&mut conn, token_auth.0);
+    if let Some(username) = username {
+        let plant_id = get_plant_id(&mut conn, &username, index);
+        if let Some(plant_id) = plant_id {
+            let query_string = format!("DELETE FROM plants WHERE id = '{}'", plant_id);
+            let query_string_2 = format!(
+                "UPDATE users SET plants = JSON_REMOVE(plants, '$[{}]') WHERE username = '{}'",
+                index, username
+            );
+            conn.query_drop(&query_string).unwrap();
+            conn.query_drop(&query_string_2).unwrap();
+            return Status::Ok;
+        }
+        return Status::NotFound;
+    }
+    return Status::Unauthorized;
 }

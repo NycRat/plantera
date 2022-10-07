@@ -33,7 +33,7 @@ pub async fn post_user_new(
 
             let query_string = format!(
                 "INSERT INTO users (username, password, token, plants) 
-                VALUES (\"{}\", MD5(\"{}{}\"), \"{}\", JSON_ARRAY())",
+                VALUES ('{}', MD5('{}{}'), '{}', JSON_ARRAY())",
                 &login_info.user_id, &login_info.user_id, &login_info.password, &token
             );
             match conn.query_drop(&query_string) {
@@ -73,7 +73,7 @@ pub async fn get_user_login(
             let login_info = auth.1.unwrap();
 
             let query_string = format!(
-                "SELECT token FROM users WHERE username = \"{}\" AND password = MD5(\"{}{}\")",
+                "SELECT token FROM users WHERE username = '{}' AND password = MD5('{}{}')",
                 login_info.user_id, login_info.user_id, login_info.password
             );
 
