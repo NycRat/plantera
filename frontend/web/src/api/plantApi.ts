@@ -1,5 +1,5 @@
 import axios from "axios";
-import SERVER_URL from "../../apiUrl";
+import SERVER_URL from "../apiUrl";
 
 export const apiGetPlantList = async (username: string) => {
   const res = await axios.get(

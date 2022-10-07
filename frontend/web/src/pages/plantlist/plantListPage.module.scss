@@ -32,8 +32,8 @@
   display: inline-block;
 
   // 20px
-  width: calc(90vw / 4 - 20px);
-  height: calc(90vw / 4 - 20px);
+  width: calc(90vw / 4 - 100px / 4);
+  height: calc(90vw / 4 - 100px / 4);
 
   border: 1px solid black;
   border-radius: 10px;
@@ -42,7 +42,7 @@
 
   background-color: $color-light-1;
 
-  transition: all 0.25s;
+  transition: box-shadow 0.25s;
   box-shadow: 2px 2px 6px #000000bb;
 
   cursor: pointer;

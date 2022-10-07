@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { Cookies } from "react-cookie";
-import SERVER_URL from "../../apiUrl";
+import SERVER_URL from "../apiUrl";
 
 export const apiGetSignupToken = async (
   username: string,

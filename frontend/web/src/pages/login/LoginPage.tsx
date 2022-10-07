@@ -1,5 +1,5 @@
 import { createRef, useState } from "react";
-import { apiGetLoginToken, apiGetSignupToken } from "./loginPageApi";
+import { apiGetLoginToken, apiGetSignupToken } from "../../api/loginApi";
 import styles from "./loginPage.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";

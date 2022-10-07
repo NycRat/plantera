@@ -7,7 +7,7 @@ use rocket::futures::lock::Mutex;
 use rocket::http::Status;
 use rocket::{Data, State};
 
-use crate::authentication::{Authentication, AuthenticationStatus, TokenAuthentication};
+use crate::authentication::TokenAuthentication;
 
 #[get("/plant/list?<username>")]
 pub async fn get_plant_list(
@@ -33,21 +33,18 @@ pub async fn get_plant_list(
 
         let where_str = &where_str[0..where_str.len() - 4];
 
-        let plant_str_arr: Vec<(String, u64)> = conn
+        let plant_str_arr: Vec<(String, u64, u64)> = conn
             .query(format!(
-                "SELECT name, watering_interval FROM plants WHERE {}",
+                "SELECT name, last_watered, watering_interval FROM plants WHERE {}",
                 where_str
             ))
             .unwrap();
 
-        for plant in &plant_str_arr {
-            println!("PLANT: {:?}", plant);
-        }
-
         let plant_arr: Vec<Plant> = plant_str_arr
             .iter()
-            .map(|(name, watering_interval)| Plant {
+            .map(|(name, last_watered, watering_interval)| Plant {
                 name: name.to_string(),
+                last_watered: *last_watered,
                 watering_interval: *watering_interval,
             })
             .collect();
