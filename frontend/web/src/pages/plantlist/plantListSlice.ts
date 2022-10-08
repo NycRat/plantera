@@ -2,7 +2,12 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Cookies } from "react-cookie";
 import { RootState } from "../../app/store";
 import Plant from "../../models/plant";
-import { apiGetPlantList, apiUpdatePlant } from "../../api/plantApi";
+import {
+  apiDeletePlant,
+  apiGetPlantList,
+  apiPostNewPlant,
+  apiUpdatePlant,
+} from "../../api/plantApi";
 
 export interface PlantListState {
   plants: Plant[];
@@ -29,10 +34,14 @@ export const plantListSlice = createSlice({
   initialState,
   reducers: {
     addPlant: (state, action: PayloadAction<Plant>) => {
-      state.plants.push(action.payload);
+      const plant = action.payload;
+      state.plants.unshift(plant);
+      apiPostNewPlant(plant);
     },
     removePlant: (state, action: PayloadAction<number>) => {
-      state.plants.splice(action.payload);
+      const index = action.payload;
+      apiDeletePlant(index);
+      state.plants.splice(index, 1);
     },
     renamePlant: (
       state,

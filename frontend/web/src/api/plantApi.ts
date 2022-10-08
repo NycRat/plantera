@@ -23,3 +23,9 @@ export const apiUpdatePlant = async (plant: Plant, index: number) => {
     withCredentials: true,
   });
 };
+
+export const apiDeletePlant = async (index: number) => {
+  await axios.delete(`${SERVER_URL}/plant?index=${index}`, {
+    withCredentials: true,
+  });
+};

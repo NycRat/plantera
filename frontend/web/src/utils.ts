@@ -1,12 +1,20 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
-const formatMinute = (seconds: number) => {
-  const m = Math.round((seconds % (60 * 60)) / 60);
-  if (!m) {
+const formatSecond = (seconds: number) => {
+  const s = Math.round(seconds % 60);
+  if (!s) {
     return "";
   }
-  return m + (m === 1 ? " minute." : " minutes.");
+  return s + (s === 1 ? " second." : " seconds.");
+};
+
+const formatMinute = (seconds: number) => {
+  const m = Math.floor((seconds % (60 * 60)) / 60);
+  if (!m) {
+    return formatSecond(seconds);
+  }
+  return m + (m === 1 ? " minute." : " minutes.") + formatSecond(seconds);
 };
 
 const formatHour = (seconds: number) => {
@@ -18,11 +26,20 @@ const formatHour = (seconds: number) => {
 };
 
 export const formatTime = (seconds: number) => {
-  const d = Math.floor(seconds / 60 / 60 / 24);
-  if (!d) {
-    return formatHour(seconds);
+  if (seconds < 0) {
+    return "0 seconds.";
   }
-  return d + (d === 1 ? " day, " : " days, ") + formatHour(seconds);
+  const d = Math.floor(seconds / 60 / 60 / 24);
+  let formatted;
+  if (!d) {
+    formatted = formatHour(seconds);
+  } else {
+    formatted = d + (d === 1 ? " day, " : " days, ") + formatHour(seconds);
+  }
+  if (formatted === "") {
+    return "0 seconds.";
+  }
+  return formatted;
 };
 
 export const useQuery = () => {

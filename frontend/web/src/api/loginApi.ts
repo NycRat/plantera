@@ -51,7 +51,6 @@ export const apiGetLoginToken = async (
       }
 
       if (err.request.status !== 500) {
-        console.log(err.response.data);
         alert("Error: " + err.response.data);
       }
     });

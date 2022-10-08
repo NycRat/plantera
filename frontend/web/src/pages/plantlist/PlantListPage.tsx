@@ -1,18 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { apiPostNewPlant } from "../../api/plantApi";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Plant from "../../models/plant";
 import styles from "./plantListPage.module.scss";
-import { selectPlantList } from "./plantListSlice";
+import { addPlant, selectPlantList } from "./plantListSlice";
 
 const PlantListPage = (): JSX.Element => {
   const navigate = useNavigate();
   const plantList = useAppSelector(selectPlantList);
+  const dispatch = useAppDispatch();
 
   const defaultNewPlant: Plant = {
-    name: "",
+    name: "GREAT PLANT XD",
     last_watered: 0,
-    watering_interval: 0,
+    watering_interval: 30,
   };
 
   return (
@@ -31,7 +31,7 @@ const PlantListPage = (): JSX.Element => {
           </div>
         ))}
       </div>
-      <button onClick={() => apiPostNewPlant(defaultNewPlant)}>
+      <button onClick={() => dispatch(addPlant(defaultNewPlant))}>
         NEW PLANT
       </button>
     </div>

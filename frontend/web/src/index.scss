@@ -41,6 +41,11 @@ button {
   font-weight: bold;
 }
 
+input {
+  font-family: $default-font;
+  font-weight: bold;
+}
+
 ::-webkit-scrollbar {
   border-radius: 5px;
   width: 10px;
