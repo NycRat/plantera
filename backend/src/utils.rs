@@ -39,6 +39,19 @@ pub async fn get_plant_from_request_data(data: Data<'_>) -> Option<Plant> {
     return None;
 }
 
+// pub async fn get_image_from_request_data(data: Data<'_>) -> Option<Vec<u8>> {
+pub async fn get_image_from_request_data(data: Data<'_>) -> Option<String> {
+    // match data.open(15.megabytes()).into_bytes().await {
+    match data.open(15.megabytes()).into_string().await {
+        Ok(bytes) => {
+            // return Some(bytes.to_vec());
+            return Some(bytes.value);
+        }
+        Err(_) => {}
+    }
+    return None;
+}
+
 pub fn get_plant_id(
     conn: &mut PooledConn,
     username: &String,

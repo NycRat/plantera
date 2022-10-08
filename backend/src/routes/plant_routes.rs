@@ -1,5 +1,7 @@
 use crate::models::plant::Plant;
-use crate::utils::{get_authorized_username, get_plant_from_request_data, get_plant_id};
+use crate::utils::{
+    get_authorized_username, get_image_from_request_data, get_plant_from_request_data, get_plant_id,
+};
 use mysql::prelude::*;
 use mysql::*;
 use rocket::futures::lock::Mutex;
@@ -55,6 +57,33 @@ pub async fn get_plant_list(
     } else {
         return (Status::NotFound, "".into());
     }
+}
+
+#[get("/plant/image?<index>")]
+pub async fn get_plant_image(
+    index: usize,
+    conn_mutex: &State<Mutex<PooledConn>>,
+    token_auth: TokenAuthentication,
+) -> (Status, Vec<u8>) {
+    let mut conn = conn_mutex.lock().await;
+
+    let username = get_authorized_username(&mut conn, token_auth.0);
+
+    if let Some(username) = username {
+        let plant_id = get_plant_id(&mut conn, &username, index);
+        if let Some(plant_id) = plant_id {
+            let query_string = format!("SELECT image FROM plants WHERE id = '{}'", plant_id);
+
+            let image: Option<Vec<u8>> = conn.query_first(query_string).unwrap();
+
+            if let Some(image) = image {
+                return (Status::Ok, image);
+            }
+        }
+        return (Status::NotFound, "".into());
+    }
+
+    return (Status::Unauthorized, "".into());
 }
 
 #[post("/plant/new", data = "<data>")]
@@ -123,10 +152,46 @@ pub async fn post_plant_update(
                                        username
                                        );
 
-            println!("{}", query_string);
             conn.query_drop(query_string).unwrap();
             return Status::Ok;
         }
+        return Status::NotFound;
+    }
+
+    return Status::Unauthorized;
+}
+
+#[post("/plant/image?<index>", data = "<data>")]
+pub async fn post_plant_image(
+    index: usize,
+    conn_mutex: &State<Mutex<PooledConn>>,
+    token_auth: TokenAuthentication,
+    data: Data<'_>,
+) -> Status {
+    let image_bytes = get_image_from_request_data(data).await;
+
+    if image_bytes.is_none() {
+        return Status::BadRequest;
+    }
+    let image_bytes = image_bytes.unwrap();
+
+    let mut conn = conn_mutex.lock().await;
+    let username = get_authorized_username(&mut conn, token_auth.0);
+
+    if let Some(username) = username {
+        let plant_id = get_plant_id(&mut conn, &username, index);
+        if let Some(plant_id) = plant_id {
+            let stuff = &image_bytes;
+
+            let query_string = format!(
+                "UPDATE plants SET image = '{}' WHERE id = '{}'",
+                stuff, plant_id
+            );
+
+            conn.query_drop(query_string).unwrap();
+            return Status::Ok;
+        }
+
         return Status::NotFound;
     }
 
