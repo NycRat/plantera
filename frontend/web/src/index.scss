@@ -20,11 +20,13 @@ body,
 .navbar {
   background-color: $color-dark-1;
   padding: 5px;
-  a {
+  span {
     font-size: 2em;
     color: white;
     text-decoration: none;
     margin-left: 20px;
+
+    cursor: pointer;
   }
 }
 

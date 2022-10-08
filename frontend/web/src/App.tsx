@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/login/LoginPage";
@@ -9,6 +9,7 @@ import PlantListPage from "./pages/plantlist/PlantListPage";
 import {
   selectPlantList,
   updatePlantListAsync,
+  waterPlant,
 } from "./pages/plantlist/plantListSlice";
 import SettingsPage from "./pages/settings/SettingsPage";
 
@@ -17,22 +18,38 @@ const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const plantList = useAppSelector(selectPlantList);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(updatePlantListAsync());
-    console.log("APP.TSX: " + plantList);
-  }, []);
+  }, [cookies.token, cookies.username, dispatch]);
+
+  useEffect(() => {
+    const updatePlantWaterTime = () => {
+      const now = new Date().valueOf() / 1000;
+      for (let i = 0; i < plantList.length; i++) {
+        const plant = plantList[i];
+        if (now > plant.last_watered + plant.watering_interval) {
+          dispatch(waterPlant(i));
+        }
+      }
+    };
+    updatePlantWaterTime();
+    const interval = setInterval(updatePlantWaterTime, 1000);
+    return () => clearInterval(interval);
+  }, [dispatch, plantList]);
 
   return (
     <>
       <nav className="navbar">
-        <a href="/">Plantera</a>
+        <span onClick={() => navigate("/")}>Plantera</span>
         {cookies.username && cookies.token ? (
           <>
-            <a href="/settings">Settings</a>
-            <a href="/plant/list">Plants</a>
+            <span onClick={() => navigate("/settings")}>Settings</span>
+            <span onClick={() => navigate("/plant/list")}>Plants</span>
           </>
         ) : (
-          <a href="/login">Login</a>
+          <span onClick={() => navigate("/login")}>Login</span>
         )}
       </nav>
       <Routes>
