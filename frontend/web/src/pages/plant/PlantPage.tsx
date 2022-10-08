@@ -68,7 +68,7 @@ const PlantPage = (): JSX.Element => {
 
   return (
     <div className="page">
-      <form onSubmit={handleRenamePlant}>
+      <form onSubmit={handleRenamePlant} onBlur={handleRenamePlant}>
         <input
           className={styles.plantName}
           ref={plantNameInputRef}
