@@ -21,7 +21,7 @@ const App = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(updatePlantListAsync());
+    dispatch(updatePlantListAsync(cookies.username));
   }, [cookies.token, cookies.username, dispatch]);
 
   useEffect(() => {

@@ -12,6 +12,25 @@ export const apiGetPlantList = async (username: string) => {
   return res.data;
 };
 
+export const apiGetPlantImage = async (index: number): Promise<string> => {
+  const res = await axios.get(`${SERVER_URL}/plant/image?index=${index}`, {
+    withCredentials: true,
+  });
+  console.log(res.data);
+  return res.data;
+};
+
+export const apiPostPlantImage = async (image: string, index: number) => {
+  const res = await axios.post(
+    `${SERVER_URL}/plant/image?index=${index}`,
+    image,
+    {
+      withCredentials: true,
+    }
+  );
+  console.log(res.data);
+};
+
 export const apiPostNewPlant = async (plant: Plant) => {
   await axios.post(`${SERVER_URL}/plant/new`, plant, {
     withCredentials: true,

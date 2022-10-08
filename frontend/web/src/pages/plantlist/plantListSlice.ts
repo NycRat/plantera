@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Cookies } from "react-cookie";
 import { RootState } from "../../app/store";
 import Plant from "../../models/plant";
 import {
   apiDeletePlant,
+  apiGetPlantImage,
   apiGetPlantList,
   apiPostNewPlant,
   apiUpdatePlant,
@@ -19,13 +19,18 @@ const initialState: PlantListState = {
 
 export const updatePlantListAsync = createAsyncThunk(
   "plantList/updatePlantList",
-  async () => {
-    const cookies = new Cookies();
-    const username = cookies.get("username");
+  async (username: string) => {
     if (typeof username === "string") {
       return apiGetPlantList(username);
     }
     return [];
+  }
+);
+
+export const updatePlantImageAsync = createAsyncThunk(
+  "plantList/updatePlantImageAsync",
+  async (index: number) => {
+    return { index, image: await apiGetPlantImage(index) };
   }
 );
 
@@ -77,6 +82,10 @@ export const plantListSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(updatePlantListAsync.fulfilled, (state, action) => {
       state.plants = action.payload;
+    });
+    builder.addCase(updatePlantImageAsync.fulfilled, (state, action) => {
+      const { index, image } = action.payload;
+      state.plants[index].image = image;
     });
   },
 });
