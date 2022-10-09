@@ -11,17 +11,19 @@ import {
 
 export interface PlantListState {
   plants: Plant[];
+  plantImages: string[]
 }
 
 const initialState: PlantListState = {
   plants: [],
+  plantImages: [],
 };
 
 export const updatePlantListAsync = createAsyncThunk(
   "plantList/updatePlantList",
   async (username: string) => {
     if (typeof username === "string") {
-      return apiGetPlantList(username);
+      return await apiGetPlantList(username);
     }
     return [];
   }
@@ -85,7 +87,7 @@ export const plantListSlice = createSlice({
     });
     builder.addCase(updatePlantImageAsync.fulfilled, (state, action) => {
       const { index, image } = action.payload;
-      state.plants[index].image = image;
+      state.plantImages[index] = image;
     });
   },
 });
@@ -99,5 +101,6 @@ export const {
 } = plantListSlice.actions;
 
 export const selectPlantList = (state: RootState) => state.plantList.plants;
+export const selectPlantImages = (state: RootState) => state.plantList.plantImages;
 
 export default plantListSlice.reducer;

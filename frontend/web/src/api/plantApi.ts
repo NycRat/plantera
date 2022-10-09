@@ -2,7 +2,7 @@ import axios from "axios";
 import SERVER_URL from "../apiUrl";
 import Plant from "../models/plant";
 
-export const apiGetPlantList = async (username: string) => {
+export const apiGetPlantList = async (username: string): Promise<Plant[]> => {
   const res = await axios.get(
     `${SERVER_URL}/plant/list?username="${username}"`
   );
@@ -13,11 +13,18 @@ export const apiGetPlantList = async (username: string) => {
 };
 
 export const apiGetPlantImage = async (index: number): Promise<string> => {
-  const res = await axios.get(`${SERVER_URL}/plant/image?index=${index}`, {
-    withCredentials: true,
-  });
-  console.log(res.data);
-  return res.data;
+  const res = await axios
+    .get(`${SERVER_URL}/plant/image?index=${index}`, {
+      withCredentials: true,
+    })
+    .catch(() => {
+      return;
+    });
+
+  if (res !== undefined) {
+    return res.data;
+  }
+  return "";
 };
 
 export const apiPostPlantImage = async (image: string, index: number) => {

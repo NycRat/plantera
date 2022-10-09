@@ -6,7 +6,6 @@ import {
   removePlant,
   renamePlant,
   selectPlantList,
-  updatePlantImageAsync,
 } from "../plantlist/plantListSlice";
 import styles from "./plantPage.module.scss";
 
@@ -27,12 +26,6 @@ const PlantPage = (): JSX.Element => {
       setNow(new Date().valueOf() / 1000);
     }, 1000);
     return () => clearInterval(interval);
-  }, [dispatch, index]);
-
-  useEffect(() => {
-    if (index !== -1) {
-      dispatch(updatePlantImageAsync(index));
-    }
   }, [dispatch, index]);
 
   const plant = plantList[index];
@@ -68,7 +61,7 @@ const PlantPage = (): JSX.Element => {
 
   return (
     <div className="page">
-      <img src={plantList[index].image} alt="haha" />
+      {/* <img src={plantList[index].image} alt="haha" /> */}
       <form onSubmit={handleRenamePlant} onBlur={handleRenamePlant}>
         <input
           className={styles.plantName}

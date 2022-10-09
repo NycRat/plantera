@@ -4,11 +4,12 @@ import { apiPostPlantImage } from "../../api/plantApi";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Plant from "../../models/plant";
 import styles from "./plantListPage.module.scss";
-import { addPlant, selectPlantList } from "./plantListSlice";
+import { addPlant, selectPlantImages, selectPlantList } from "./plantListSlice";
 
 const PlantListPage = (): JSX.Element => {
   const navigate = useNavigate();
   const plantList = useAppSelector(selectPlantList);
+  const plantImages = useAppSelector(selectPlantImages);
   const dispatch = useAppDispatch();
   const plantImageRef = createRef<HTMLInputElement>();
   const [preview, setPreview] = useState("");
@@ -33,7 +34,6 @@ const PlantListPage = (): JSX.Element => {
         setPreview(reader.result);
         apiPostPlantImage(reader.result, 0);
       }
-      console.log(reader.result);
     };
 
     if (plantImageRef.current.files !== null) {
@@ -57,6 +57,9 @@ const PlantListPage = (): JSX.Element => {
               navigate(`/plant?index=${i}`);
             }}
           >
+            {plantImages[i] !== "" && (
+              <img src={plantImages[i]} alt={plant.name} />
+            )}
             <h2>{plant.name}</h2>
           </div>
         ))}

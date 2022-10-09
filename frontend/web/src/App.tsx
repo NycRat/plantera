@@ -7,7 +7,9 @@ import LoginPage from "./pages/login/LoginPage";
 import PlantPage from "./pages/plant/PlantPage";
 import PlantListPage from "./pages/plantlist/PlantListPage";
 import {
+  selectPlantImages,
   selectPlantList,
+  updatePlantImageAsync,
   updatePlantListAsync,
   waterPlant,
 } from "./pages/plantlist/plantListSlice";
@@ -17,12 +19,22 @@ const App = (): JSX.Element => {
   const [cookies] = useCookies(["token", "username"]);
   const dispatch = useAppDispatch();
   const plantList = useAppSelector(selectPlantList);
+  const plantImages = useAppSelector(selectPlantImages);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(updatePlantListAsync(cookies.username));
   }, [cookies.token, cookies.username, dispatch]);
+
+  useEffect(() => {
+    console.log("Xd");
+    for (let i = 0; i < plantList.length; i++) {
+      if (plantImages[i] === undefined) {
+        dispatch(updatePlantImageAsync(i));
+      }
+    }
+  }, [dispatch, plantList]);
 
   useEffect(() => {
     const updatePlantWaterTime = () => {
@@ -46,7 +58,7 @@ const App = (): JSX.Element => {
         {cookies.username && cookies.token ? (
           <>
             <span onClick={() => navigate("/settings")}>Settings</span>
-            <span onClick={() => navigate("/plant/list")}>Plants</span>
+            <span onClick={() => navigate("/plant_list")}>Plants</span>
           </>
         ) : (
           <span onClick={() => navigate("/login")}>Login</span>
@@ -58,7 +70,7 @@ const App = (): JSX.Element => {
         <Route path="/settings" element={<SettingsPage />} />
         {cookies.username && cookies.token && (
           <>
-            <Route path="/plant/list" element={<PlantListPage />} />
+            <Route path="/plant_list" element={<PlantListPage />} />
             <Route path="/plant" element={<PlantPage />} />
           </>
         )}
