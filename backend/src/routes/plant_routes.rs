@@ -74,10 +74,23 @@ pub async fn get_plant_image(
         if let Some(plant_id) = plant_id {
             let query_string = format!("SELECT image FROM plants WHERE id = '{}'", plant_id);
 
-            let image: Option<Vec<u8>> = conn.query_first(query_string).unwrap();
-
-            if let Some(image) = image {
-                return (Status::Ok, image);
+            match conn.query_first::<mysql::Value, String>(query_string) {
+                Ok(image) => {
+                    if let Some(image) = image {
+                        match image {
+                            mysql::Value::Bytes(bytes) => {
+                                return (Status::Ok, bytes);
+                            }
+                            mysql::Value::NULL => {
+                                return (Status::Ok, "".into());
+                            }
+                            _ => {
+                                return (Status::InternalServerError, "".into());
+                            }
+                        }
+                    }
+                }
+                Err(_) => {}
             }
         }
         return (Status::NotFound, "".into());
