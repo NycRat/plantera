@@ -77,7 +77,7 @@ const PlantPage = (): JSX.Element => {
       <button
         onClick={() => {
           dispatch(removePlant(index));
-          navigate("/plant/list");
+          navigate("/plant_list");
         }}
       >
         Remove Plant
