@@ -1,13 +1,12 @@
 import { createRef, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { formatTime, useQuery } from "../../utils";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { formatTime, useQuery } from "../utils";
 import {
   removePlant,
   renamePlant,
   selectPlantList,
-} from "../plantlist/plantListSlice";
-import styles from "./plantPage.module.scss";
+} from "../slices/plantListSlice";
 
 const PlantPage = (): JSX.Element => {
   const plantList = useAppSelector(selectPlantList);
@@ -64,9 +63,9 @@ const PlantPage = (): JSX.Element => {
       {/* <img src={plantList[index].image} alt="haha" /> */}
       <form onSubmit={handleRenamePlant} onBlur={handleRenamePlant}>
         <input
-          className={styles.plantName}
           ref={plantNameInputRef}
           defaultValue={plant.name}
+          className="text-4xl text-center bg-transparent border-none mt-7"
         />
       </form>
       <h2>Water every: {formatTime(plant.watering_interval)}</h2>
@@ -79,6 +78,8 @@ const PlantPage = (): JSX.Element => {
           dispatch(removePlant(index));
           navigate("/plant_list");
         }}
+        className="px-2 py-1 rounded-full
+        duration-100 bg-color-dark-2 hover:bg-color-dark-1"
       >
         Remove Plant
       </button>

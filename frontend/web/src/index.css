@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background-color: #00af7c;
+  color: #ffffff;
+
+  overflow: hidden;
+}
+
+.page {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}

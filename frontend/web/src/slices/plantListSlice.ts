@@ -1,17 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
-import Plant from "../../models/plant";
+import { RootState } from "../app/store";
+import Plant from "../models/plant";
 import {
   apiDeletePlant,
   apiGetPlantImage,
   apiGetPlantList,
   apiPostNewPlant,
   apiUpdatePlant,
-} from "../../api/plantApi";
+} from "../api/plantApi";
 
 export interface PlantListState {
   plants: Plant[];
-  plantImages: string[]
+  plantImages: string[];
 }
 
 const initialState: PlantListState = {
@@ -101,6 +101,7 @@ export const {
 } = plantListSlice.actions;
 
 export const selectPlantList = (state: RootState) => state.plantList.plants;
-export const selectPlantImages = (state: RootState) => state.plantList.plantImages;
+export const selectPlantImages = (state: RootState) =>
+  state.plantList.plantImages;
 
 export default plantListSlice.reducer;

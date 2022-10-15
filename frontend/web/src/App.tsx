@@ -2,18 +2,18 @@ import { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
-import HomePage from "./pages/home/HomePage";
-import LoginPage from "./pages/login/LoginPage";
-import PlantPage from "./pages/plant/PlantPage";
-import PlantListPage from "./pages/plantlist/PlantListPage";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import PlantPage from "./pages/PlantPage";
+import PlantListPage from "./pages/PlantListPage";
+import SettingsPage from "./pages/SettingsPage";
 import {
   selectPlantImages,
   selectPlantList,
   updatePlantImageAsync,
   updatePlantListAsync,
   waterPlant,
-} from "./pages/plantlist/plantListSlice";
-import SettingsPage from "./pages/settings/SettingsPage";
+} from "./slices/plantListSlice";
 
 const App = (): JSX.Element => {
   const [cookies] = useCookies(["token", "username"]);
@@ -34,7 +34,7 @@ const App = (): JSX.Element => {
         dispatch(updatePlantImageAsync(i));
       }
     }
-  }, [dispatch, plantList]);
+  }, [dispatch, plantImages, plantList]);
 
   useEffect(() => {
     const updatePlantWaterTime = () => {
@@ -53,15 +53,35 @@ const App = (): JSX.Element => {
 
   return (
     <>
-      <nav className="navbar">
-        <span onClick={() => navigate("/")}>Plantera</span>
+      <nav className="p-[5px] bg-color-dark-1">
+        <span
+          onClick={() => navigate("/")}
+          className="ml-5 text-3xl cursor-pointer"
+        >
+          Plantera
+        </span>
         {cookies.username && cookies.token ? (
           <>
-            <span onClick={() => navigate("/settings")}>Settings</span>
-            <span onClick={() => navigate("/plant_list")}>Plants</span>
+            <span
+              onClick={() => navigate("/settings")}
+              className="ml-5 text-3xl cursor-pointer"
+            >
+              Settings
+            </span>
+            <span
+              onClick={() => navigate("/plant_list")}
+              className="ml-5 text-3xl cursor-pointer"
+            >
+              Plants
+            </span>
           </>
         ) : (
-          <span onClick={() => navigate("/login")}>Login</span>
+          <span
+            onClick={() => navigate("/login")}
+            className="ml-5 text-3xl cursor-pointer"
+          >
+            Login
+          </span>
         )}
       </nav>
       <Routes>
