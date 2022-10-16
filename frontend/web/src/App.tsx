@@ -8,7 +8,6 @@ import PlantPage from "./pages/PlantPage";
 import PlantListPage from "./pages/PlantListPage";
 import SettingsPage from "./pages/SettingsPage";
 import {
-  selectPlantImages,
   selectPlantList,
   updatePlantImageAsync,
   updatePlantListAsync,
@@ -19,7 +18,6 @@ const App = (): JSX.Element => {
   const [cookies] = useCookies(["token", "username"]);
   const dispatch = useAppDispatch();
   const plantList = useAppSelector(selectPlantList);
-  const plantImages = useAppSelector(selectPlantImages);
 
   const navigate = useNavigate();
 
@@ -28,13 +26,10 @@ const App = (): JSX.Element => {
   }, [cookies.token, cookies.username, dispatch]);
 
   useEffect(() => {
-    console.log("Xd");
     for (let i = 0; i < plantList.length; i++) {
-      if (plantImages[i] === undefined) {
-        dispatch(updatePlantImageAsync(i));
-      }
+      dispatch(updatePlantImageAsync(i));
     }
-  }, [dispatch, plantImages, plantList]);
+  }, [dispatch, plantList.length]);
 
   useEffect(() => {
     const updatePlantWaterTime = () => {

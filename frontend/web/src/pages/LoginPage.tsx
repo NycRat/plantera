@@ -51,14 +51,14 @@ const LoginPage = (): JSX.Element => {
         <input
           type={"text"}
           ref={usernameRef}
-          className="border-none text-[1.2em]"
+          className="border-none text-[1.2em] text-black"
         />
         <br />
         <label className="p-1 text-2xl">Password: </label>
         <input
           type={"password"}
           ref={passwordRef}
-          className="border-none text-[1.2em]"
+          className="border-none text-[1.2em] text-black"
         />
         <br />
         <input

@@ -68,7 +68,7 @@ const PlantListPage = (): JSX.Element => {
             duration-200 hover:shadow-2xl cursor-pointer border border-black
             "
           >
-            {plantImages[i] !== "" && (
+            {plantImages[i] && (
               <img
                 src={plantImages[i]}
                 alt={plant.name}
