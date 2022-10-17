@@ -40,7 +40,6 @@ const LoginPage = (): JSX.Element => {
 
   return (
     <div className="page">
-      {/* <form className={styles.loginForm} onSubmit={handleSubmit}> */}
       <form
         onSubmit={handleSubmit}
         className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2

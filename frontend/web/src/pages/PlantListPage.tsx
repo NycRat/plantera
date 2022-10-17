@@ -1,6 +1,6 @@
 import { createRef, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiPostPlantImage } from "../api/plantApi";
+import { apiPostNewPlant, apiPostPlantImage } from "../api/plantApi";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Plant from "../models/plant";
 import {
@@ -23,9 +23,10 @@ const PlantListPage = (): JSX.Element => {
     watering_interval: 30,
   };
 
-  const handleCreatePlant = (event: FormEvent<HTMLFormElement>) => {
+  const handleCreatePlant = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(addPlant(defaultNewPlant));
+    await apiPostNewPlant(defaultNewPlant);
 
     if (plantImageRef.current === null) {
       return;
@@ -42,7 +43,6 @@ const PlantListPage = (): JSX.Element => {
     if (plantImageRef.current.files !== null) {
       const image = plantImageRef.current.files[0];
       if (image !== undefined) {
-        /* reader.readAsBinaryString(plantImageRef.current.files[0]); */
         reader.readAsDataURL(plantImageRef.current.files[0]);
       }
     }
@@ -50,7 +50,6 @@ const PlantListPage = (): JSX.Element => {
 
   return (
     <div>
-      {/* <div className={styles.plantList}> */}
       <div
         className="absolute top-24 left-1/2 -translate-x-1/2 text-center 
         w-[90vw] h-[80vh] p-[20px] bg-color-dark-1 overflow-y-scroll 

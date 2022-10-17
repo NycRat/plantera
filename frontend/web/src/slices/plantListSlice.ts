@@ -5,7 +5,6 @@ import {
   apiDeletePlant,
   apiGetPlantImage,
   apiGetPlantList,
-  apiPostNewPlant,
   apiUpdatePlant,
 } from "../api/plantApi";
 
@@ -43,7 +42,6 @@ export const plantListSlice = createSlice({
     addPlant: (state, action: PayloadAction<Plant>) => {
       const plant = action.payload;
       state.plants.unshift(plant);
-      apiPostNewPlant(plant);
     },
     removePlant: (state, action: PayloadAction<number>) => {
       const index = action.payload;
@@ -61,6 +59,9 @@ export const plantListSlice = createSlice({
       const plant = state.plants[index];
       plant.name = name;
       apiUpdatePlant(plant, index);
+    },
+    clearPlantImages: (state) => {
+      state.plantImages = [];
     },
     changePlantWateringInterval: (
       state,
@@ -98,6 +99,7 @@ export const {
   waterPlant,
   renamePlant,
   changePlantWateringInterval,
+  clearPlantImages,
 } = plantListSlice.actions;
 
 export const selectPlantList = (state: RootState) => state.plantList.plants;

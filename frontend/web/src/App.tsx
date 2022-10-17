@@ -8,6 +8,7 @@ import PlantPage from "./pages/PlantPage";
 import PlantListPage from "./pages/PlantListPage";
 import SettingsPage from "./pages/SettingsPage";
 import {
+  clearPlantImages,
   selectPlantList,
   updatePlantImageAsync,
   updatePlantListAsync,
@@ -26,6 +27,7 @@ const App = (): JSX.Element => {
   }, [cookies.token, cookies.username, dispatch]);
 
   useEffect(() => {
+    dispatch(clearPlantImages());
     for (let i = 0; i < plantList.length; i++) {
       dispatch(updatePlantImageAsync(i));
     }
