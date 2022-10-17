@@ -1,7 +1,9 @@
 #[macro_use]
 extern crate rocket;
 
-use mysql::*;
+use std::{thread, time};
+
+use mysql::{prelude::Queryable, *};
 use rocket::futures::lock::Mutex;
 
 pub mod authentication;
@@ -9,13 +11,14 @@ pub mod models;
 pub mod routes;
 pub mod utils;
 
-#[launch]
-async fn rocket() -> _ {
+#[tokio::main]
+async fn main() {
     dotenv::dotenv().ok();
 
     let url = std::env::var("DATABASE_URL").unwrap();
     let pool = Pool::new(&url as &str).unwrap();
     let conn = pool.get_conn().unwrap();
+    let mut conn_2 = pool.get_conn().unwrap();
 
     use rocket::http::Method;
     use rocket_cors::{AllowedOrigins, CorsOptions};
@@ -30,7 +33,7 @@ async fn rocket() -> _ {
         )
         .allow_credentials(true);
 
-    rocket::build()
+    let rocket = rocket::build()
         .attach(cors.to_cors().unwrap())
         .manage(Mutex::new(conn))
         .mount(
@@ -46,5 +49,16 @@ async fn rocket() -> _ {
                 routes::plant_routes::post_plant_image,
                 routes::plant_routes::delete_plant,
             ],
-        )
+        );
+    // tokio::spawn(ha(rocket));
+    tokio::spawn(async {
+        let _ = rocket.launch().await.unwrap();
+    });
+    loop {
+        println!(
+            "{:?}",
+            conn_2.query_first::<String, &str>("SELECT user FROM plants WHERE user = 'BillyCheng'")
+        );
+        thread::sleep(time::Duration::from_millis(1000));
+    }
 }
