@@ -24,19 +24,28 @@ async fn update_loop(mut mysql_conn: PooledConn) {
             .round() as u64;
         println!("{:?}", now);
         let plants = mysql_conn
-            .query::<(String, u64, u64), &str>(
-                "SELECT name, last_watered, watering_interval FROM plants",
+            .query::<(String, String, u64, u64), &str>(
+                "SELECT id, name, last_watered, watering_interval FROM plants",
             )
             .unwrap_or(vec![]);
 
-        for (name, last_watered, watering_interval) in plants {
+        for (id, name, last_watered, watering_interval) in plants {
             let plant = Plant {
                 name,
                 last_watered,
                 watering_interval,
             };
             if now > plant.last_watered + plant.watering_interval {
-                // TODO -> send notification to water plant, updated last_watered in database
+                // TODO -> send notification to water plant
+                let query_string = format!(
+                    "UPDATE plants SET last_watered = {} WHERE id = '{}'",
+                    now, id
+                );
+                println!("{}", query_string);
+                match mysql_conn.query_drop(query_string) {
+                    Ok(_) => {}
+                    Err(err) => println!("{:?}", err),
+                }
             }
         }
         thread::sleep(Duration::from_secs(60));
