@@ -17,11 +17,11 @@ pub mod utils;
 
 async fn update_loop(mut mysql_conn: PooledConn) {
     loop {
-        let now = SystemTime::now()
+        let now = (SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_secs_f64()
-            .round() as u64;
+            / 60.0) as u64;
         println!("{:?}", now);
         let plants = mysql_conn
             .query::<(String, String, u64, u64), &str>(

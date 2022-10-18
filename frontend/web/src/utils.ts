@@ -1,43 +1,36 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
-const formatSecond = (seconds: number) => {
-  const s = Math.round(seconds % 60);
-  if (!s) {
+const formatMinute = (minutes: number) => {
+  let m = minutes % 60;
+  if (!m) {
     return "";
   }
-  return s + (s === 1 ? " second." : " seconds.");
+  return m + (m === 1 ? " minute." : " minutes.");
 };
 
-const formatMinute = (seconds: number) => {
-  const m = Math.floor((seconds % (60 * 60)) / 60);
-  if (!m) {
-    return formatSecond(seconds);
-  }
-  return m + (m === 1 ? " minute." : " minutes.") + formatSecond(seconds);
-};
-
-const formatHour = (seconds: number) => {
-  const h = Math.floor((seconds % (60 * 60 * 24)) / (60 * 60));
+const formatHour = (minutes: number) => {
+  const h = Math.floor((minutes % (60 * 24)) / 60);
   if (!h) {
-    return formatMinute(seconds);
+    return formatMinute(minutes);
   }
-  return h + (h === 1 ? " hour, " : " hours, ") + formatMinute(seconds);
+  return h + (h === 1 ? " hour, " : " hours, ") + formatMinute(minutes);
 };
 
-export const formatTime = (seconds: number) => {
-  if (seconds < 0) {
-    return "0 seconds.";
+export const formatTime = (minutes: number) => {
+  minutes = Math.round(minutes);
+  if (minutes <= 0) {
+    return "0 minutes.";
   }
-  const d = Math.floor(seconds / 60 / 60 / 24);
+  const d = Math.floor(minutes / 60 / 24);
   let formatted;
   if (!d) {
-    formatted = formatHour(seconds);
+    formatted = formatHour(minutes);
   } else {
-    formatted = d + (d === 1 ? " day, " : " days, ") + formatHour(seconds);
+    formatted = d + (d === 1 ? " day, " : " days, ") + formatHour(minutes);
   }
   if (formatted === "") {
-    return "0 seconds.";
+    return "0 minutes.";
   }
   return formatted;
 };

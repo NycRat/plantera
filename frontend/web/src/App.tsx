@@ -12,7 +12,6 @@ import {
   selectPlantList,
   updatePlantImageAsync,
   updatePlantListAsync,
-  waterPlant,
 } from "./slices/plantListSlice";
 
 const App = (): JSX.Element => {
@@ -38,13 +37,13 @@ const App = (): JSX.Element => {
       const now = new Date().valueOf() / 1000;
       for (let i = 0; i < plantList.length; i++) {
         const plant = plantList[i];
-        if (now > plant.last_watered + plant.watering_interval) {
-          dispatch(waterPlant(i));
+        if (plant.last_watered === now) {
+          alert("WAtER OPLANT");
         }
       }
     };
     updatePlantWaterTime();
-    const interval = setInterval(updatePlantWaterTime, 1000);
+    const interval = setInterval(updatePlantWaterTime, 10000);
     return () => clearInterval(interval);
   }, [dispatch, plantList]);
 

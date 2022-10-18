@@ -75,12 +75,6 @@ export const plantListSlice = createSlice({
       plant.watering_interval = watering_interval;
       apiUpdatePlant(plant, index);
     },
-    waterPlant: (state, action: PayloadAction<number>) => {
-      const index = action.payload;
-      const plant = state.plants[index];
-      plant.last_watered = Math.floor(new Date().valueOf() / 1000);
-      apiUpdatePlant(plant, index);
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(updatePlantListAsync.fulfilled, (state, action) => {
@@ -96,7 +90,6 @@ export const plantListSlice = createSlice({
 export const {
   addPlant,
   removePlant,
-  waterPlant,
   renamePlant,
   changePlantWateringInterval,
   clearPlantImages,

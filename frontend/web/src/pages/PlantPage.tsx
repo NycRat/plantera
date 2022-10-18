@@ -15,17 +15,21 @@ const PlantPage = (): JSX.Element => {
 
   const query = useQuery();
   const indexStr = query.get("index");
-  const [now, setNow] = useState(new Date().valueOf() / 1000);
+  const [now, setNow] = useState(new Date().valueOf() / 1000 / 60);
   const plantNameInputRef = createRef<HTMLInputElement>();
 
   const index = indexStr ? parseInt(indexStr) : -1;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setNow(new Date().valueOf() / 1000);
+      setNow(new Date().valueOf() / 1000 / 60);
     }, 1000);
     return () => clearInterval(interval);
   }, [dispatch, index]);
+
+  useEffect(() => {
+    console.log(now);
+  }, [now]);
 
   const plant = plantList[index];
 
@@ -57,6 +61,8 @@ const PlantPage = (): JSX.Element => {
       );
     }
   };
+
+  console.log(plant);
 
   return (
     <div className="page">
