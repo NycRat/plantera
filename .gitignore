@@ -8,7 +8,35 @@
 
 /backend/target
 
-# Frontend React
+# Frontend Web
 
 frontend/web/node_modules
 frontend/web/build
+
+# Frontend Android
+
+.gradle/
+build/
+
+local.properties
+
+*.log
+
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+*.jks
+*.keystore
+
+google-services.json
+
+*.hprof
