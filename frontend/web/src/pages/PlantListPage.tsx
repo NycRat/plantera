@@ -18,7 +18,7 @@ const PlantListPage = (): JSX.Element => {
   const [preview, setPreview] = useState("");
 
   const defaultNewPlant: Plant = {
-    name: "GREAT PLANT XD",
+    name: "Plant",
     note: "this is a note about the plant",
     last_watered: 0,
     watering_interval: 30,
@@ -53,7 +53,7 @@ const PlantListPage = (): JSX.Element => {
     <div>
       <div
         className="absolute top-24 left-1/2 -translate-x-1/2 text-center 
-        w-[90vw] h-[80vh] p-[20px] bg-color-dark-1 overflow-y-scroll 
+        w-[90vw] h-[80vh] py-[20px] bg-color-dark-1 overflow-y-scroll 
         border-4 border-black rounded-lg"
       >
         <h1 className="m-0 mb-4 text-6xl">Plants</h1>
@@ -63,10 +63,18 @@ const PlantListPage = (): JSX.Element => {
             onClick={() => {
               navigate(`/plant?index=${i}`);
             }}
-            className="relative inline-block w-[calc(90vw/4-100px/4)]
-            h-[calc(90vw/4-100px/4)] rounded-lg mx-[5px] my-[2px] bg-color-light-1 
-            duration-200 hover:shadow-2xl cursor-pointer border border-black
-            "
+            className="relative inline-block 
+            w-[calc(90vw-60px)]
+            h-[calc(90vw-60px)] 
+            sm:w-[calc(90vw/2-90px/2)]
+            sm:h-[calc(90vw/2-90px/2)] 
+            md:w-[calc(90vw/3-100px/3)]
+            md:h-[calc(90vw/3-100px/3)] 
+            lg:sm:w-[calc(90vw/4-100px/4)]
+            lg:sm:h-[calc(90vw/4-100px/4)] 
+            rounded-lg mx-[5px] my-[2px] bg-color-light-1 transition-shadow
+            hover:shadow-2xl cursor-pointer border border-black
+            overflow-hidden whitespace-nowrap"
           >
             {plantImages[i] && (
               <img
@@ -76,7 +84,7 @@ const PlantListPage = (): JSX.Element => {
                 rounded-lg"
               />
             )}
-            <h2 className="mx-4 absolute bottom-0 text-3xl">{plant.name}</h2>
+            <h2 className="mx-2 absolute bottom-0 text-3xl">{plant.name}</h2>
           </div>
         ))}
       </div>
