@@ -48,16 +48,15 @@ export const plantListSlice = createSlice({
       apiDeletePlant(index);
       state.plants.splice(index, 1);
     },
-    renamePlant: (
+    updatePlant: (
       state,
       action: PayloadAction<{
-        name: string;
+        plant: Plant;
         index: number;
       }>
     ) => {
-      const { name, index } = action.payload;
-      const plant = state.plants[index];
-      plant.name = name;
+      const { plant, index } = action.payload;
+      state.plants[index] = plant;
       apiUpdatePlant(plant, index);
     },
     clearPlantImages: (state) => {
@@ -90,7 +89,7 @@ export const plantListSlice = createSlice({
 export const {
   addPlant,
   removePlant,
-  renamePlant,
+  updatePlant,
   changePlantWateringInterval,
   clearPlantImages,
 } = plantListSlice.actions;

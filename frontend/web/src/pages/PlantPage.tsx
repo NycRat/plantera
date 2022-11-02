@@ -4,8 +4,8 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { formatTime, useQuery } from "../utils";
 import {
   removePlant,
-  renamePlant,
   selectPlantList,
+  updatePlant,
 } from "../slices/plantListSlice";
 
 const PlantPage = (): JSX.Element => {
@@ -17,6 +17,7 @@ const PlantPage = (): JSX.Element => {
   const indexStr = query.get("index");
   const [now, setNow] = useState(new Date().valueOf() / 1000 / 60);
   const plantNameInputRef = createRef<HTMLInputElement>();
+  const plantNoteInputRef = createRef<HTMLTextAreaElement>();
 
   const index = indexStr ? parseInt(indexStr) : -1;
 
@@ -27,11 +28,11 @@ const PlantPage = (): JSX.Element => {
     return () => clearInterval(interval);
   }, [dispatch, index]);
 
-  useEffect(() => {
-    console.log(now);
-  }, [now]);
-
   const plant = plantList[index];
+
+  useEffect(() => {
+    console.log(plant);
+  }, [plant]);
 
   if (plant === undefined && plantList.length === 0) {
     return (
@@ -54,15 +55,13 @@ const PlantPage = (): JSX.Element => {
     if (plantNameInputRef.current !== null) {
       console.log(plantNameInputRef.current.value);
       dispatch(
-        renamePlant({
-          name: plantNameInputRef.current.value,
+        updatePlant({
+          plant: { ...plant, name: plantNameInputRef.current.value },
           index: index,
         })
       );
     }
   };
-
-  console.log(plant);
 
   return (
     <div className="page">
@@ -79,6 +78,28 @@ const PlantPage = (): JSX.Element => {
         Water in:{" "}
         {formatTime(plant.last_watered + plant.watering_interval - now)}
       </h2>
+      <textarea
+        ref={plantNoteInputRef}
+        cols={30}
+        rows={10}
+        defaultValue={plant.note}
+        className="text-black"
+      ></textarea>
+      <br />
+      <button
+        onClick={() => {
+          if (plantNoteInputRef.current) {
+            const note = plantNoteInputRef.current.value;
+            dispatch(updatePlant({ plant: { ...plant, note }, index }));
+          }
+          console.log(plantNoteInputRef.current?.value);
+        }}
+        className="px-2 py-1 rounded-full
+        duration-100 bg-color-dark-2 hover:bg-color-dark-1 mb-2"
+      >
+        SAVE (TEMP BUTTON)
+      </button>
+      <br />
       <button
         onClick={() => {
           dispatch(removePlant(index));

@@ -24,14 +24,15 @@ async fn update_loop(mut mysql_conn: PooledConn) {
             / 60.0) as u64;
         println!("{:?}", now);
         let plants = mysql_conn
-            .query::<(String, String, u64, u64), &str>(
-                "SELECT id, name, last_watered, watering_interval FROM plants",
+            .query::<(String, String, String, u64, u64), &str>(
+                "SELECT id, name, note, last_watered, watering_interval FROM plants",
             )
             .unwrap_or(vec![]);
 
-        for (id, name, last_watered, watering_interval) in plants {
+        for (id, name, note, last_watered, watering_interval) in plants {
             let plant = Plant {
                 name,
+                note,
                 last_watered,
                 watering_interval,
             };

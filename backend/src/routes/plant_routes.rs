@@ -34,17 +34,18 @@ pub async fn get_plant_list(
 
         let where_str = &where_str[0..where_str.len() - 4];
 
-        let plant_str_arr: Vec<(String, u64, u64)> = conn
+        let plant_str_arr: Vec<(String, String, u64, u64)> = conn
             .query(format!(
-                "SELECT name, last_watered, watering_interval FROM plants WHERE {}",
+                "SELECT name, note, last_watered, watering_interval FROM plants WHERE {}",
                 where_str
             ))
             .unwrap();
 
         let plant_arr: Vec<Plant> = plant_str_arr
             .iter()
-            .map(|(name, last_watered, watering_interval)| Plant {
+            .map(|(name, note, last_watered, watering_interval)| Plant {
                 name: name.to_string(),
+                note: note.to_string(),
                 last_watered: *last_watered,
                 watering_interval: *watering_interval,
             })
@@ -122,8 +123,8 @@ pub async fn post_plant_new(
 
         let plant_id = uuid::Uuid::new_v4().to_string();
         let insert_plant_table_str = format!(
-            "INSERT INTO plants (id, name, user, watering_interval) VALUES ('{}', '{}', {}, {})",
-            &plant_id, &plant.name, &get_user_id, &plant.watering_interval
+            "INSERT INTO plants (id, name, note, user, watering_interval) VALUES ('{}', '{}', '{}', {}, {})",
+            &plant_id, &plant.name, &plant.note, &get_user_id, &plant.watering_interval
         );
         conn.query_drop(insert_plant_table_str).unwrap();
 
@@ -157,8 +158,9 @@ pub async fn post_plant_update(
     if let Some(username) = username {
         let plant_id = get_plant_id(&mut conn, &username, index);
         if let Some(plant_id) = plant_id {
-            let query_string = format!("UPDATE plants SET name = '{}', last_watered = {}, watering_interval = {} WHERE id = '{}' AND user = '{}'",
+            let query_string = format!("UPDATE plants SET name = '{}', note = '{}', last_watered = {}, watering_interval = {} WHERE id = '{}' AND user = '{}'",
                                        plant.name,
+                                       plant.note,
                                        plant.last_watered,
                                        plant.watering_interval,
                                        plant_id,

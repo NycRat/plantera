@@ -19,6 +19,7 @@ const PlantListPage = (): JSX.Element => {
 
   const defaultNewPlant: Plant = {
     name: "GREAT PLANT XD",
+    note: "this is a note about the plant",
     last_watered: 0,
     watering_interval: 30,
   };
