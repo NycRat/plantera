@@ -63,6 +63,15 @@ const PlantPage = (): JSX.Element => {
     }
   };
 
+  const handleUpdatePlantNote = (event: FormEvent<HTMLTextAreaElement>) => {
+    event.preventDefault();
+    if (plantNoteInputRef.current) {
+      const note = plantNoteInputRef.current.value;
+      dispatch(updatePlant({ plant: { ...plant, note }, index }));
+    }
+    console.log(plantNoteInputRef.current?.value);
+  };
+
   return (
     <div className="page">
       {/* <img src={plantList[index].image} alt="haha" /> */}
@@ -80,25 +89,10 @@ const PlantPage = (): JSX.Element => {
       </h2>
       <textarea
         ref={plantNoteInputRef}
-        cols={30}
-        rows={10}
         defaultValue={plant.note}
-        className="text-black"
+        className="text-black resize-none w-11/12 h-52 max-w-md rounded-md p-1"
+        onBlur={handleUpdatePlantNote}
       ></textarea>
-      <br />
-      <button
-        onClick={() => {
-          if (plantNoteInputRef.current) {
-            const note = plantNoteInputRef.current.value;
-            dispatch(updatePlant({ plant: { ...plant, note }, index }));
-          }
-          console.log(plantNoteInputRef.current?.value);
-        }}
-        className="px-2 py-1 rounded-full
-        duration-100 bg-color-dark-2 hover:bg-color-dark-1 mb-2"
-      >
-        SAVE (TEMP BUTTON)
-      </button>
       <br />
       <button
         onClick={() => {

@@ -25,20 +25,26 @@ pub async fn get_plant_list(
             return (Status::Ok, "[]".into());
         }
 
-        let mut where_str = "".to_owned();
-        for plant in plant_id_arr {
-            where_str += "id = '";
-            where_str += &plant.to_string();
-            where_str += "' OR ";
+        let mut plant_id_list = String::new();
+        for i in 0..plant_id_arr.len() {
+            if i != 0 {
+                plant_id_list += ",";
+            }
+            plant_id_list += "'";
+            plant_id_list += &plant_id_arr[i];
+            plant_id_list += "'";
         }
 
-        let where_str = &where_str[0..where_str.len() - 4];
+        let query_string = format!(
+                "SELECT name, note, last_watered, watering_interval FROM plants 
+                WHERE id IN ({}) ORDER BY FIELD(id, {})",
+                plant_id_list, plant_id_list
+            );
+
+        println!("QUERY: {}" , query_string);
 
         let plant_str_arr: Vec<(String, String, u64, u64)> = conn
-            .query(format!(
-                "SELECT name, note, last_watered, watering_interval FROM plants WHERE {}",
-                where_str
-            ))
+            .query(query_string)
             .unwrap();
 
         let plant_arr: Vec<Plant> = plant_str_arr
