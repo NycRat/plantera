@@ -129,7 +129,8 @@ pub async fn post_plant_new(
         conn.query_drop(insert_plant_table_str).unwrap();
 
         let insert_user_plants_str = format!(
-            "UPDATE users SET plants = JSON_ARRAY_APPEND(plants, '$', '{}') WHERE username = '{}'",
+            // "UPDATE users SET plants = JSON_ARRAY_APPEND(plants, '$', '{}') WHERE username = '{}'",
+            "UPDATE users SET plants = JSON_ARRAY_INSERT(plants, '$[0]', '{}') WHERE username = '{}'",
             plant_id, username
         );
         conn.query_drop(insert_user_plants_str).unwrap();
