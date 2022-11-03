@@ -3,4 +3,5 @@ export default interface Plant {
   note: string;
   last_watered: number;
   watering_interval: number;
+  image?: string;
 }

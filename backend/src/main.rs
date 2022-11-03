@@ -35,6 +35,7 @@ async fn update_loop(mut mysql_conn: PooledConn) {
                 note,
                 last_watered,
                 watering_interval,
+                image: None
             };
             if now > plant.last_watered + plant.watering_interval {
                 // TODO -> send notification to water plant

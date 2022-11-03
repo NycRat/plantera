@@ -3,16 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { apiPostNewPlant, apiPostPlantImage } from "../api/plantApi";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Plant from "../models/plant";
-import {
-  addPlant,
-  selectPlantImages,
-  selectPlantList,
-} from "../slices/plantListSlice";
+import { addPlant, selectPlantList } from "../slices/plantListSlice";
 
 const PlantListPage = (): JSX.Element => {
   const navigate = useNavigate();
   const plantList = useAppSelector(selectPlantList);
-  const plantImages = useAppSelector(selectPlantImages);
   const dispatch = useAppDispatch();
   const plantImageRef = createRef<HTMLInputElement>();
   const [preview, setPreview] = useState("");
@@ -24,20 +19,15 @@ const PlantListPage = (): JSX.Element => {
     watering_interval: 30,
   };
 
-  const handleCreatePlant = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    dispatch(addPlant(defaultNewPlant));
-    await apiPostNewPlant(defaultNewPlant);
-
+  const handleUpdatePlantImage = async () => {
     if (plantImageRef.current === null) {
       return;
     }
 
     let reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       if (typeof reader.result === "string") {
         setPreview(reader.result);
-        apiPostPlantImage(reader.result, 0);
       }
     };
 
@@ -47,6 +37,20 @@ const PlantListPage = (): JSX.Element => {
         reader.readAsDataURL(plantImageRef.current.files[0]);
       }
     }
+  };
+
+  const handleCreatePlant = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    let newPlant = defaultNewPlant;
+    if (preview !== "") {
+      newPlant.image = preview;
+    }
+    dispatch(addPlant(newPlant));
+    await apiPostNewPlant(newPlant);
+    await apiPostPlantImage(preview, 0);
+
+    setPreview("");
   };
 
   return (
@@ -76,9 +80,9 @@ const PlantListPage = (): JSX.Element => {
             hover:shadow-2xl cursor-pointer border border-black
             overflow-hidden whitespace-nowrap"
           >
-            {plantImages[i] && (
+            {plantList[i].image && (
               <img
-                src={plantImages[i]}
+                src={plantList[i].image}
                 alt={plant.name}
                 className="left-0 top-0 absolute w-[100%] h-[100%] object-cover
                 rounded-lg"
@@ -88,12 +92,13 @@ const PlantListPage = (): JSX.Element => {
           </div>
         ))}
       </div>
+      <input
+        type={"file"}
+        ref={plantImageRef}
+        className="bg-white text-black"
+        onChange={handleUpdatePlantImage}
+      />
       <form onSubmit={handleCreatePlant}>
-        <input
-          type={"file"}
-          ref={plantImageRef}
-          className="bg-white text-black"
-        />
         <input
           type={"submit"}
           value={"NEW PLANT"}

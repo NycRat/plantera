@@ -25,7 +25,7 @@ pub fn get_authorized_username(conn: &mut PooledConn, token: Option<String>) -> 
 }
 
 pub async fn get_plant_from_request_data(data: Data<'_>) -> Option<Plant> {
-    let data_str = data.open(1.kilobytes()).into_string().await.unwrap();
+    let data_str = data.open(3.megabytes()).into_string().await.unwrap();
     match rocket::serde::json::from_str::<Plant>(&data_str) {
         Ok(mut plant) => {
             plant.name = plant.name.trim().into();
@@ -34,7 +34,7 @@ pub async fn get_plant_from_request_data(data: Data<'_>) -> Option<Plant> {
             }
             return Some(plant);
         }
-        Err(_) => {}
+        Err(err) => println!("{:?}", err)
     }
     return None;
 }
@@ -42,12 +42,12 @@ pub async fn get_plant_from_request_data(data: Data<'_>) -> Option<Plant> {
 // pub async fn get_image_from_request_data(data: Data<'_>) -> Option<Vec<u8>> {
 pub async fn get_image_from_request_data(data: Data<'_>) -> Option<String> {
     // match data.open(15.megabytes()).into_bytes().await {
-    match data.open(15.megabytes()).into_string().await {
+    match data.open(3.megabytes()).into_string().await {
         Ok(bytes) => {
             // return Some(bytes.to_vec());
             return Some(bytes.value);
         }
-        Err(_) => {}
+        Err(err) => println!("{:?}", err)
     }
     return None;
 }

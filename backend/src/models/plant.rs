@@ -7,4 +7,5 @@ pub struct Plant {
     pub note: String,
     pub last_watered: u64,
     pub watering_interval: u64,
+    pub image: Option<String>
 }

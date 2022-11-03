@@ -9,19 +9,20 @@ import {
 } from "../api/plantApi";
 
 export interface PlantListState {
+  firstLoad: boolean;
   plants: Plant[];
-  plantImages: string[];
 }
 
 const initialState: PlantListState = {
+  firstLoad: true,
   plants: [],
-  plantImages: [],
 };
 
 export const updatePlantListAsync = createAsyncThunk(
   "plantList/updatePlantList",
   async (username: string) => {
     if (typeof username === "string") {
+      console.log("updated plant list");
       return await apiGetPlantList(username);
     }
     return [];
@@ -31,6 +32,7 @@ export const updatePlantListAsync = createAsyncThunk(
 export const updatePlantImageAsync = createAsyncThunk(
   "plantList/updatePlantImageAsync",
   async (index: number) => {
+    console.log("updated image: " + index);
     return { index, image: await apiGetPlantImage(index) };
   }
 );
@@ -39,7 +41,10 @@ export const plantListSlice = createSlice({
   name: "plantList",
   initialState,
   reducers: {
-    addPlant: (state, action: PayloadAction<Plant>) => {
+    addPlant: (
+      state,
+      action: PayloadAction<Plant>
+    ) => {
       const plant = action.payload;
       state.plants.unshift(plant);
     },
@@ -59,9 +64,6 @@ export const plantListSlice = createSlice({
       state.plants[index] = plant;
       apiUpdatePlant(plant, index);
     },
-    clearPlantImages: (state) => {
-      state.plantImages = [];
-    },
     changePlantWateringInterval: (
       state,
       action: PayloadAction<{
@@ -78,10 +80,12 @@ export const plantListSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(updatePlantListAsync.fulfilled, (state, action) => {
       state.plants = action.payload;
+      console.log(state.plants);
     });
     builder.addCase(updatePlantImageAsync.fulfilled, (state, action) => {
+      state.firstLoad = false;
       const { index, image } = action.payload;
-      state.plantImages[index] = image;
+      state.plants[index].image = image;
     });
   },
 });
@@ -91,11 +95,9 @@ export const {
   removePlant,
   updatePlant,
   changePlantWateringInterval,
-  clearPlantImages,
 } = plantListSlice.actions;
 
 export const selectPlantList = (state: RootState) => state.plantList.plants;
-export const selectPlantImages = (state: RootState) =>
-  state.plantList.plantImages;
+export const selectFirstLoad = (state: RootState) => state.plantList.firstLoad;
 
 export default plantListSlice.reducer;

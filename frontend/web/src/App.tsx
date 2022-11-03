@@ -4,11 +4,11 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import PlantPage from "./pages/PlantPage";
 import PlantListPage from "./pages/PlantListPage";
+import PlantPage from "./pages/PlantPage";
 import SettingsPage from "./pages/SettingsPage";
 import {
-  clearPlantImages,
+  selectFirstLoad,
   selectPlantList,
   updatePlantImageAsync,
   updatePlantListAsync,
@@ -18,19 +18,28 @@ const App = (): JSX.Element => {
   const [cookies] = useCookies(["token", "username"]);
   const dispatch = useAppDispatch();
   const plantList = useAppSelector(selectPlantList);
+  const firstLoad = useAppSelector(selectFirstLoad);
 
   const navigate = useNavigate();
 
+  // first time we just get the plant list
   useEffect(() => {
     dispatch(updatePlantListAsync(cookies.username));
   }, [cookies.token, cookies.username, dispatch]);
 
+  // after plant list, get images
   useEffect(() => {
-    dispatch(clearPlantImages());
-    for (let i = 0; i < plantList.length; i++) {
-      dispatch(updatePlantImageAsync(i));
+    // TODO - FIND A WAY TO NOT USE FIRSTLOAD
+    if (firstLoad) {
+      const fetchAllPlantImages = async () => {
+        for (let i = 0; i < plantList.length; i++) {
+          await dispatch(updatePlantImageAsync(i));
+        }
+      };
+      fetchAllPlantImages();
+    } else {
     }
-  }, [dispatch, plantList.length]);
+  }, [dispatch, plantList.length, firstLoad]);
 
   useEffect(() => {
     const updatePlantWaterTime = () => {

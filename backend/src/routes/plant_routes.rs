@@ -54,6 +54,7 @@ pub async fn get_plant_list(
                 note: note.to_string(),
                 last_watered: *last_watered,
                 watering_interval: *watering_interval,
+                image: None
             })
             .collect();
 
