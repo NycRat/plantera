@@ -41,10 +41,7 @@ export const plantListSlice = createSlice({
   name: "plantList",
   initialState,
   reducers: {
-    addPlant: (
-      state,
-      action: PayloadAction<Plant>
-    ) => {
+    addPlant: (state, action: PayloadAction<Plant>) => {
       const plant = action.payload;
       state.plants.unshift(plant);
     },

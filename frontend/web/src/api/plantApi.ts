@@ -28,13 +28,9 @@ export const apiGetPlantImage = async (index: number): Promise<string> => {
 };
 
 export const apiPostPlantImage = async (image: string, index: number) => {
-  await axios.post(
-    `${SERVER_URL}/plant/image?index=${index}`,
-    image,
-    {
-      withCredentials: true,
-    }
-  );
+  await axios.post(`${SERVER_URL}/plant/image?index=${index}`, image, {
+    withCredentials: true,
+  });
 };
 
 export const apiPostNewPlant = async (plant: Plant) => {
