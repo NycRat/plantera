@@ -74,36 +74,49 @@ const PlantPage = (): JSX.Element => {
 
   return (
     <div className="page">
-      {/* <img src={plantList[index].image} alt="haha" /> */}
-      <form onSubmit={handleRenamePlant} onBlur={handleRenamePlant}>
-        <input
-          ref={plantNameInputRef}
-          defaultValue={plant.name}
-          className="text-4xl text-center bg-transparent border-none mt-7"
-        />
-      </form>
-      <h2>Water every: {formatTime(plant.watering_interval)}</h2>
-      <h2>
-        Water in:{" "}
-        {formatTime(plant.last_watered + plant.watering_interval - now)}
-      </h2>
-      <textarea
-        ref={plantNoteInputRef}
-        defaultValue={plant.note}
-        className="text-black resize-none w-11/12 h-52 max-w-md rounded-md p-1"
-        onBlur={handleUpdatePlantNote}
-      ></textarea>
-      <br />
-      <button
-        onClick={() => {
-          dispatch(removePlant(index));
-          navigate("/plant_list");
-        }}
-        className="px-2 py-1 rounded-full
-        duration-100 bg-color-dark-2 hover:bg-color-dark-1"
+      <img
+        src={plantList[index].image}
+        alt="plant"
+        className="absolute z-0 rounded-full border-8
+        h-[85vh] w-[85vh]
+        top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      />
+      <div
+        className="absolute z-10 
+        top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+        p-5 rounded-lg bg-[#141518e6]
+        "
       >
-        Remove Plant
-      </button>
+        <form onSubmit={handleRenamePlant} onBlur={handleRenamePlant}>
+          <input
+            ref={plantNameInputRef}
+            defaultValue={plant.name}
+            className="text-4xl text-center bg-transparent border-none"
+          />
+        </form>
+        <h2>Water every: {formatTime(plant.watering_interval)}</h2>
+        <h2>
+          Water in:{" "}
+          {formatTime(plant.last_watered + plant.watering_interval - now)}
+        </h2>
+        <textarea
+          ref={plantNoteInputRef}
+          defaultValue={plant.note}
+          className="text-black resize-none w-11/12 h-52 max-w-md rounded-md p-1"
+          onBlur={handleUpdatePlantNote}
+        ></textarea>
+        <br />
+        <button
+          onClick={() => {
+            dispatch(removePlant(index));
+            navigate("/plant_list");
+          }}
+          className="px-2 py-1 rounded-full
+        duration-100 bg-color-dark-2 hover:bg-color-dark-1"
+        >
+          Remove Plant
+        </button>
+      </div>
     </div>
   );
 };
