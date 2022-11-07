@@ -89,10 +89,9 @@ const PlantPage = (): JSX.Element => {
         ></div>
       )}
       <div
-        className="absolute z-10 
+        className="absolute z-10 w-1/3
         top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-        p-5 rounded-lg bg-[#141518e6]
-        "
+        p-5 rounded-lg bg-[#141518f2]"
       >
         <form onSubmit={handleRenamePlant} onBlur={handleRenamePlant}>
           <input
@@ -109,7 +108,7 @@ const PlantPage = (): JSX.Element => {
         <textarea
           ref={plantNoteInputRef}
           defaultValue={plant.note}
-          className="text-black resize-none w-11/12 h-52 max-w-md rounded-md p-1"
+          className="text-black resize-none w-11/12 h-72 max-w-md rounded-md p-1"
           onBlur={handleUpdatePlantNote}
           placeholder="Notes about the plant"
         ></textarea>
