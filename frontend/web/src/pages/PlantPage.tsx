@@ -74,13 +74,20 @@ const PlantPage = (): JSX.Element => {
 
   return (
     <div className="page">
-      <img
-        src={plantList[index].image}
-        alt="plant"
-        className="absolute z-0 rounded-full border-8
+      {plantList[index].image ? (
+        <img
+          src={plantList[index].image}
+          alt="plant"
+          className="absolute z-0 rounded-full border-8
         h-[85vh] w-[85vh]
         top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      />
+        />
+      ) : (
+        <div
+          className="absolute z-0 rounded-full border-8 h-[85vh] w-[85vh]
+            top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+      )}
       <div
         className="absolute z-10 
         top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
@@ -104,6 +111,7 @@ const PlantPage = (): JSX.Element => {
           defaultValue={plant.note}
           className="text-black resize-none w-11/12 h-52 max-w-md rounded-md p-1"
           onBlur={handleUpdatePlantNote}
+          placeholder="Notes about the plant"
         ></textarea>
         <br />
         <button

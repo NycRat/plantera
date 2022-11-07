@@ -14,7 +14,7 @@ const PlantListPage = (): JSX.Element => {
 
   const defaultNewPlant: Plant = {
     name: "Plant",
-    note: "this is a note about the plant",
+    note: "",
     last_watered: 0,
     watering_interval: 30,
   };
@@ -88,7 +88,12 @@ const PlantListPage = (): JSX.Element => {
                 rounded-lg"
               />
             )}
-            <h2 className="mx-2 absolute bottom-0 text-3xl">{plant.name}</h2>
+            <h2
+              className="absolute bottom-0 text-3xl text-center
+              w-[100%] bg-[#000000a0]"
+            >
+              {plant.name}
+            </h2>
           </div>
         ))}
       </div>
