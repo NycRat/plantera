@@ -15,28 +15,18 @@ frontend/web/build
 
 # Frontend Android
 
-.gradle/
-build/
-
-local.properties
-
-*.log
-
-captures/
-.externalNativeBuild/
-.cxx/
-*.apk
-output.json
-
 *.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
-
-*.jks
-*.keystore
-
-google-services.json
-
-*.hprof
+.gradle
+frontend/android/local.properties
+frontend/android/.idea/caches
+frontend/android/.idea/libraries
+frontend/android/.idea/modules.xml
+frontend/android/.idea/workspace.xml
+frontend/android/.idea/navEditor.xml
+frontend/android/.idea/assetWizardSettings.xml
+frontend/android/build
+frontend/android/app/build
+frontend/android/captures
+.externalNativeBuild
+.cxx
+local.properties

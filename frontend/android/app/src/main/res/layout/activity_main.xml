@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00af7c"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Plantera"
+        android:layout_centerInParent="true"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:fontFamily="@font/rajdhani"
+        />
+
+    <Button
+        android:id="@+id/buttonIncrement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Increment Count"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textTitle"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/rajdhani"
+        android:onClick="onIncrement"
+        />
+
+    <Button
+        android:id="@+id/buttonDecrement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decrement Count"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/buttonIncrement"
+        android:fontFamily="@font/rajdhani"
+        android:onClick="onDecrement"
+        />
+
+</RelativeLayout>
